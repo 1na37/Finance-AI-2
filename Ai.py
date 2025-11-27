@@ -1401,60 +1401,69 @@ st.caption("💡 **Agent Capabilities:** Reasoning • Planning • Tool Executi
 st.caption("📊 **Visualization Tools:** Budget Charts • Investment Growth • Net Worth • Debt Paydown • Stock History • Tax Comparisons")
 st.caption("🔐 **Disclaimer:** Educational purposes only. Not financial advice. Always consult qualified professionals.")
 st.caption("⚡ **Tips:** Be specific with numbers and goals. Use specialized agents for complex tasks. Ask for visualizations!")
-    selected_name = selected_assistant_name
-    current_attempt = st.session_state.model_attempts.get(selected_name, 1)
-    max_attempts = 6
-    response_text = None
-    used_fallback = False
-    successful_attempt = current_attempt
 
-    for attempt in range(current_attempt, max_attempts+1):
-        model_to_try = get_assistant_model(selected_name, attempt)
-        with st.chat_message("assistant", avatar="🤖"):
-            status = f"Thinking with model {model_to_try} (attempt {attempt}/{max_attempts})..."
-            with st.spinner(status):
-                raw = post_openrouter(model_to_try, messages_payload, temperature=st.session_state.temperature, max_tokens=st.session_state.max_tokens)
-        if raw:
-            response_text = clean_response(raw)
-            successful_attempt = attempt
-            break
-        else:
-            # try next
-            used_fallback = True
-            st.info("Attempt failed — trying next model...")
+# --- Assumed main logic block follows, requires a context like a function or 'if' block ---
+selected_name = selected_assistant_name
+current_attempt = st.session_state.model_attempts.get(selected_name, 1)
+max_attempts = 6
+response_text = None
+used_fallback = False
+successful_attempt = current_attempt
 
-    if not response_text:
-        st.error("All models failed. Please check your API key or network.")
+for attempt in range(current_attempt, max_attempts + 1):
+    model_to_try = get_assistant_model(selected_name, attempt)
+    with st.chat_message("assistant", avatar="🤖"):
+        status = f"Thinking with model {model_to_try} (attempt {attempt}/{max_attempts})..."
+        with st.spinner(status):
+            # This line and the rest of the block are assumed to be inside a function/conditional statement
+            # You must ensure 'post_openrouter', 'get_assistant_model', etc., are defined.
+            raw = post_openrouter(model_to_try, messages_payload, temperature=st.session_state.temperature, max_tokens=st.session_state.max_tokens)
+    
+    if raw:
+        response_text = clean_response(raw)
+        successful_attempt = attempt
+        break
     else:
-        # First response should be JSON according to AGENT_SYSTEM_PROMPT; try to parse it
-        parsed = extract_json_from_text(response_text)
-        tool_result = None
-        tool_called = None
+        # try next
+        used_fallback = True
+        st.info("Attempt failed — trying next model...")
 
-        if parsed and "action" in parsed:
-            action = parsed.get("action", {})
-            tool_name = action.get("name")
-            args = action.get("args", {})
-            tool_called = tool_name
-            # Execute the requested tool (map names)
-            if tool_name == "budget_calculation":
-                tool_result = tool_budget_calculation(args.get("income"), args.get("bills"), args.get("lifestyle"))
-            elif tool_name == "investment_return":
-                tool_result = tool_investment_return(args.get("amount"), args.get("rate_pct"), args.get("years"))
-            elif tool_name == "net_worth":
-                tool_result = tool_net_worth(args.get("assets", {}), args.get("liabilities", {}))
-            elif tool_name == "debt_snowball":
-                tool_result = tool_debt_snowball(args.get("debts", []))
-            elif tool_name == "tax_estimate":
-                tool_result = tool_tax_estimate(args.get("annual_salary"), args.get("country","generic"))
-            elif tool_name == "currency_convert":
-                tool_result = tool_currency_convert(args.get("amount"), args.get("from_currency"), args.get("to_currency"))
-            elif tool_name == "price_fetch":
-                tool_result = tool_price_fetch(args.get("symbol"))
-            elif tool_name == "invoice_tax_helper":
-                tool_result = tool_invoice_tax_helper(args.get("amount"), args.get("tax_pct",10))
-            else:
-                tool_result = {"error": "Unknown tool requested."}
+if not response_text:
+    st.error("All models failed. Please check your API key or network.")
+else:
+    # First response should be JSON according to AGENT_SYSTEM_PROMPT; try to parse it
+    parsed = extract_json_from_text(response_text)
+    tool_result = None
+    tool_called = None
+
+    if parsed and "action" in parsed:
+        action = parsed.get("action", {})
+        tool_name = action.get("name")
+        args = action.get("args", {})
+        tool_called = tool_name
+        
+        # Execute the requested tool (map names)
+        if tool_name == "budget_calculation":
+            tool_result = tool_budget_calculation(args.get("income"), args.get("bills"), args.get("lifestyle"))
+        elif tool_name == "investment_return":
+            tool_result = tool_investment_return(args.get("amount"), args.get("rate_pct"), args.get("years"))
+        elif tool_name == "net_worth":
+            tool_result = tool_net_worth(args.get("assets", {}), args.get("liabilities", {}))
+        elif tool_name == "debt_snowball":
+            tool_result = tool_debt_snowball(args.get("debts", []))
+        elif tool_name == "tax_estimate":
+            tool_result = tool_tax_estimate(args.get("annual_salary"), args.get("country","generic"))
+        elif tool_name == "currency_convert":
+            tool_result = tool_currency_convert(args.get("amount"), args.get("from_currency"), args.get("to_currency"))
+        elif tool_name == "price_fetch":
+            tool_result = tool_price_fetch(args.get("symbol"))
+        elif tool_name == "invoice_tax_helper":
+            # Note: The original code had a typo here, changed "tax_pct",10) to "tax_pct", 10)
+            tool_result = tool_invoice_tax_helper(args.get("amount"), args.get("tax_pct", 10))
+        else:
+            tool_result = {"error": "Unknown tool requested."}
+            
+# The tool execution logic ends here.
 
             # Append the assistant's plan and action as message, and append a tool role with results
             st.session_state.messages.append({"role":"assistant","content":response_text,"timestamp":datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "model": get_assistant_model(selected_name, successful_attempt), "fallback_used": used_fallback})
@@ -1506,19 +1515,132 @@ st.caption("⚡ **Tips:** Be specific with numbers and goals. Use specialized ag
                 else:
                     st.caption(f"Model: {model_name}")
 
+# Assuming this code is inside a larger 'if tool_result is not None:' block, 
+# or follows the tool execution logic.
+
+# The initial indentation of '            ' is removed to fit the likely context 
+# where 'tool_result' or 'parsed' was checked.
+
+if tool_result is not None:
+    # This block executes if a tool was called and a result was obtained.
+    # Note: 'final_text' must be defined and constructed based on the tool_result 
+    # before this part of the code is reached.
+    
+    # display final assistant message
+    with st.chat_message("assistant", avatar="🤖"):
+        st.write(final_text)
+        st.caption(f"Responded at: {bot_ts}")
+        
+        # Determine model name for display
+        model_full_name = get_assistant_model(selected_name, successful_attempt)
+        model_name = model_full_name.split('/')[-1] # Cleaner way to get the base name
+        
+        if used_fallback:
+            st.caption(f"🔄 **Model:** {model_name} (Fallback)")
         else:
-            # model did not request a tool: parse answer and show directly
-            # ensure we append assistant full message
-            bot_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            st.session_state.messages.append({"role":"assistant","content":response_text,"timestamp":bot_ts,"model": get_assistant_model(selected_name, successful_attempt)})
-            with st.chat_message("assistant", avatar="🤖"):
-                st.write(response_text)
-                st.caption(f"Responded at: {bot_ts}")
-                model_name = get_assistant_model(selected_name, successful_attempt).split('/')[1] if "/" in get_assistant_model(selected_name, successful_attempt) else get_assistant_model(selected_name, successful_attempt)
-                if used_fallback:
-                    st.caption(f"🔄 Model: {model_name} (Fallback)")
-                else:
-                    st.caption(f"Model: {model_name}")
+            st.caption(f"**Model:** {model_name}")
+
+# Append the assistant's plan and action as message
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": response_text,
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
+        "model": get_assistant_model(selected_name, successful_attempt), 
+        "fallback_used": used_fallback
+    })
+    
+    # show assistant plan
+    with st.chat_message("assistant", avatar="🤖"):
+        st.write(f"Plan: {parsed.get('plan')}")
+        st.caption("Agent decided to run an internal tool and returned results below...")
+
+    # show tool result to user immediately
+    with st.chat_message("assistant", avatar="🤖"):
+        st.write("🔧 Tool result:")
+        st.code(tool_result, language='json') # Use st.code for structured output
+
+    # --- Tool Follow-up Call (to generate final answer) ---
+    
+    followup_msgs = [{"role":"system", "content": combined_system_prompt}]
+    
+    # memory summary again
+    if st.session_state.memory:
+        mem_summary = "\n".join([f"- {m['content']}" for m in st.session_state.memory[-10:]])
+        followup_msgs.append({"role":"system","content":f"User memory summary (short):\n{mem_summary}"})
+        
+    # conversation history
+    for m in st.session_state.messages[-10:]:
+        followup_msgs.append({"role": m["role"], "content": m["content"]})
+        
+    # add tool result as a 'tool' role so model sees it
+    followup_msgs.append({"role":"tool", "content": json.dumps({"tool": tool_name, "result": tool_result})})
+    
+    # final ask: produce a friendly answer using the tool result
+    followup_msgs.append({"role":"user", "content":"Using the tool result above, produce a concise friendly answer for the user (include disclaimer)."})
+    
+    final_response = post_openrouter(
+        get_assistant_model(selected_name, successful_attempt), 
+        followup_msgs, 
+        temperature=st.session_state.temperature, 
+        max_tokens=st.session_state.max_tokens
+    )
+    final_text = clean_response(final_response) if final_response else "Tool executed but assistant could not produce a final answer."
+
+    # store memory if the user gave important facts or agent suggests storing
+    mem_facts = detect_memoryworthy_facts(prompt + " " + json.dumps(tool_result))
+    if mem_facts:
+        store_memory_items(mem_facts)
+
+    # append final assistant message to session chat
+    bot_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    msg_data = {
+        "role": "assistant",
+        "content": final_text, 
+        "timestamp": bot_ts, 
+        "model": get_assistant_model(selected_name, successful_attempt)
+    }
+    if used_fallback:
+        msg_data["fallback_used"] = True
+    st.session_state.messages.append(msg_data)
+
+    # display final assistant message
+    with st.chat_message("assistant", avatar="🤖"):
+        st.write(final_text)
+        st.caption(f"Responded at: {bot_ts}")
+        
+        model_full_name = get_assistant_model(selected_name, successful_attempt)
+        model_name = model_full_name.split('/')[-1] # Cleaner way to get the base name
+        
+        if used_fallback:
+            st.caption(f"🔄 **Model:** {model_name} (Fallback)")
+        else:
+            st.caption(f"**Model:** {model_name}")
+
+else:
+    # --- Logic for Direct Response (No tool called) ---
+    
+    # model did not request a tool: parse answer and show directly
+    bot_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # ensure we append assistant full message
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": response_text,
+        "timestamp": bot_ts,
+        "model": get_assistant_model(selected_name, successful_attempt)
+    })
+    
+    with st.chat_message("assistant", avatar="🤖"):
+        st.write(response_text)
+        st.caption(f"Responded at: {bot_ts}")
+        
+        model_full_name = get_assistant_model(selected_name, successful_attempt)
+        model_name = model_full_name.split('/')[-1]
+        
+        if used_fallback:
+            st.caption(f"🔄 **Model:** {model_name} (Fallback)")
+        else:
+            st.caption(f"**Model:** {model_name}")
 
 # Footer
 st.divider()
