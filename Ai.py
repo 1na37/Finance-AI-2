@@ -122,8 +122,12 @@ def post_openrouter(model: str, messages: List[Dict], temperature: float = 0.4,
 # ------------------------------
 # Enhanced Assistant Configs
 # ------------------------------
+# ------------------------------
+# Enhanced Assistant Configs - FIXED STRING LITERALS (REWRITTEN)
+# ------------------------------
 ASSISTANTS = {
-    "💼 Personal Finance Advisor": {
+    "PersonalFinanceAdvisor": {
+        "display_name": "💼 Personal Finance Advisor", # New clean key
         "primary": "qwen/qwen3-235b-a22b:free",
         "backup1": "deepseek/deepseek-chat-v3.1:free", 
         "backup2": "mistralai/mistral-small-3.2-24b-instruct:free",
@@ -133,7 +137,6 @@ ASSISTANTS = {
 - Debt management strategies
 - Emergency fund planning
 - Basic investment guidance
-- Data visualization and financial analysis
 
 AGENTIC BEHAVIOR:
 1. Always start with a clear plan
@@ -141,11 +144,11 @@ AGENTIC BEHAVIOR:
 3. Ask clarifying questions when information is missing
 4. Provide step-by-step reasoning
 5. Include specific, actionable recommendations
-6. Use visualization tools to create charts and graphs
 
 Always include: "I am not a licensed financial advisor; this is educational information.""""
     },
-    "📈 Investment Analyst": {
+    "InvestmentAnalyst": {
+        "display_name": "📈 Investment Analyst", # New clean key
         "primary": "deepseek/deepseek-r1-0528:free",
         "backup1": "openai/gpt-oss-120b:free",
         "backup2": "qwen/qwen3-coder:free", 
@@ -155,7 +158,6 @@ Always include: "I am not a licensed financial advisor; this is educational info
 - Investment return projections
 - Asset allocation strategies
 - Market research and analysis
-- Technical analysis and charting
 
 AGENTIC BEHAVIOR:
 1. Analyze current portfolio when provided
@@ -163,11 +165,11 @@ AGENTIC BEHAVIOR:
 3. Consider risk tolerance and time horizon
 4. Provide comparative analysis
 5. Suggest diversification strategies
-6. Create visualizations for investment analysis
 
 Include: "Not professional financial advice. Past performance ≠ future results.""""
     },
-    "📊 Budget Planner": {
+    "BudgetPlanner": {
+        "display_name": "📊 Budget Planner", # New clean key
         "primary": "google/gemini-2.0-flash-exp:free",
         "backup1": "x-ai/grok-4-fast:free",
         "backup2": "qwen/qwen3-235b-a22b:free",
@@ -177,7 +179,6 @@ Include: "Not professional financial advice. Past performance ≠ future results
 - Savings goal planning
 - Cash flow optimization
 - Financial habit formation
-- Budget visualization and reporting
 
 AGENTIC BEHAVIOR:
 1. Build comprehensive budget frameworks
@@ -185,11 +186,11 @@ AGENTIC BEHAVIOR:
 3. Set realistic financial goals
 4. Provide monthly tracking guidance
 5. Adjust plans based on user feedback
-6. Create visual budget breakdowns
 
 Include: "Educational budget planning only.""""
     },
-    "🏛️ Economic Researcher": {
+    "EconomicResearcher": {
+        "display_name": "🏛️ Economic Researcher", # New clean key
         "primary": "google/gemini-2.0-flash-exp:free", 
         "backup1": "deepseek/deepseek-chat-v3.1:free",
         "backup2": "qwen/qwen3-235b-a22b:free",
@@ -199,7 +200,6 @@ Include: "Educational budget planning only.""""
 - Market trend research
 - Economic indicator interpretation
 - Research summarization
-- Data visualization and trend analysis
 
 AGENTIC BEHAVIOR:
 1. Research current economic conditions
@@ -207,11 +207,11 @@ AGENTIC BEHAVIOR:
 3. Connect macroeconomic trends to personal finance
 4. Provide data-driven insights
 5. Source and verify information
-6. Create economic data visualizations
 
 Include: "Educational economic analysis only.""""
     },
-    "🧾 Tax Helper (General)": {
+    "TaxHelperGeneral": {
+        "display_name": "🧾 Tax Helper (General)", # New clean key
         "primary": "mistralai/mistral-small-3.2-24b-instruct:free",
         "backup1": "qwen/qwen3-235b-a22b:free",
         "backup2": "deepseek/deepseek-r1-0528:free",
@@ -221,7 +221,6 @@ Include: "Educational economic analysis only.""""
 - Tax-advantaged account guidance
 - Filing preparation overview
 - Tax implication analysis
-- Tax scenario visualization
 
 AGENTIC BEHAVIOR:
 1. Estimate tax liabilities accurately
@@ -229,7 +228,6 @@ AGENTIC BEHAVIOR:
 3. Explain tax concepts clearly
 4. Provide filing preparation tips
 5. Clarify jurisdiction limitations
-6. Create tax comparison visualizations
 
 Include: "General information only - consult a tax professional.""""
     }
