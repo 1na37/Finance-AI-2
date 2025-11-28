@@ -1,11 +1,19 @@
-# Finance AI
+# Multi-AI Financial Assistant
 
-An advanced agentic financial assistant with reasoning, planning, tool execution, and data visualization capabilities.
+This project is a multi-agent AI system that combines a web search agent and a finance agent to answer questions about stocks and companies.
 
 ## Features
 
-- 🤖 **Multiple AI Agents**: Personal Finance, Investment, Budget, Economic Research, Tax
-- 🧠 **Memory System**: Context retention across conversations
-- 📊 **Data Visualization**: Interactive charts and graphs
-- 🛠️ **Financial Tools**: Calculations, analysis, and projections
-- 🔄 **Fallback Models**: Multiple model providers for reliability
+- **Web Search Agent**: Uses DuckDuckGo to search the web for relevant information and cites sources.
+- **Finance Agent**: Uses Yahoo Finance to get stock prices, analyst recommendations, fundamentals, and company news.
+- **Multi-Agent**: Both agents work together to provide comprehensive answers.
+
+## How to Run
+
+1. Clone the repository.
+2. Install the requirements: `pip install -r requirements.txt`
+3. Set up environment variables in a `.env` file:
+   - `PHI_API_KEY`
+   - `GROQ_API_KEY`
+4. Run the Streamlit app: `streamlit run app.py`
+
